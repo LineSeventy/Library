@@ -21,3 +21,15 @@ myLibrary.forEach(myLibrary => {
     content.textContent =  `Name: ${myLibrary.name}, Genre: ${myLibrary.genre}, Audience: ${myLibrary.audience}`
 display.appendChild(content);
 })
+
+let dialog = document.querySelector("dialog");
+let showBtn = document.querySelector("dialog + button");
+let closeBtn = document.querySelector("dialog button");
+
+showBtn.addEventListener("click", () => {
+    dialog.showModal();
+})
+
+closeBtn.addEventListener("click", () => {
+    dialog.close();
+})
