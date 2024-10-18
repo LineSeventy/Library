@@ -1,23 +1,23 @@
-const myLibrary = [{
-    "Title": 'Solo Leveling',
-    "Genre": 'Fantasy',
-    "Type": 'Webbnove',
-    "Year": 2000   
-},
-{
-    "Title": 'Reincarnator',
-    "Genre": 'Regression',
-    "Type": 'Webbnovel',
-    "Year": 2001    
+const myLibrary =[{
+    name: "test",
+    genre: "test",
+    audience: "test" 
 }];
 
-function Book(title, genre , type, year){
-    this.Title = title;
-    this.Genre = genre;
-    this.Type = type;
-    this.Year = year;
+function book(name, genre, audience) {
+    this.name = name;
+    this.genre = genre; 
+    this.audience = audience;
 }
 
 function addBookToLibrary(){
-    
+
 }
+
+let display = document.querySelector(".anchor");
+
+myLibrary.forEach(myLibrary => {
+    let content = document.createElement("div");
+    content.textContent =  `Name: ${myLibrary.name}, Genre: ${myLibrary.genre}, Audience: ${myLibrary.audience}`
+display.appendChild(content);
+})
