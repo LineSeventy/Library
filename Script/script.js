@@ -1,104 +1,122 @@
-const myLibrary =[];
+const myLibrary = [];
 
-function book(name, genre, audience, readStatus) {
+class Book {
+  constructor(name, genre, audience, readStatus) {
     this.name = name;
-    this.genre = genre; 
+    this.genre = genre;
     this.audience = audience;
-    this.readStatus = readStatus;
+    this._readStatus = readStatus; 
+  }
+
+
+  get readStatus() {
+    return this._readStatus;
+  }
+
+
+  set readStatus(status) {
+    if (status === 'Have Read' || status === 'Not Read') {
+      this._readStatus = status;
+    } else {
+      console.log("Invalid status. Use 'Have Read' or 'Not Read'.");
+    }
+  }
+
+
+  toggleReadStatus() {
+    this.readStatus = this.readStatus === 'Have Read' ? 'Not Read' : 'Have Read';
+  }
 }
+
 
 function addBookToLibrary() {
-    document.getElementById("userForm").addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        let display = document.querySelector(".anchor");
-        let nameGiven = document.getElementById("nameInput").value;
-        let genreGiven = document.getElementById("genreInput").value;
-        let audienceGiven = document.getElementById("audienceInput").value;
-        let readStatusGiven =  document.getElementById("readStatus").value;
-        let content = document.createElement("li");
+  document.getElementById("userForm").addEventListener('submit', function(event) {
+    event.preventDefault();
 
-        let addBook = new book(nameGiven, genreGiven, audienceGiven,readStatusGiven);
+    const display = document.querySelector(".anchor");
+    const nameGiven = document.getElementById("nameInput").value;
+    const genreGiven = document.getElementById("genreInput").value;
+    const audienceGiven = document.getElementById("audienceInput").value;
+    const readStatusGiven = document.getElementById("readStatus").value;
 
-        const index = myLibrary.length -1;
-        content.setAttribute('data-index', index);
-        
-        myLibrary.push(addBook);
-        content.textContent = `Name: ${addBook.name}, Genre: ${addBook.genre}, Audience: ${addBook.audience} Status: ${addBook.readStatus}` ;
+    const book = new Book(nameGiven, genreGiven, audienceGiven, readStatusGiven);
+    const index = myLibrary.length;
+    myLibrary.push(book);
 
-        let deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.onclick = function() {
-            deleteBook(index);
-        }
-        content.appendChild(deleteBtn);
-
-        let readBtn = document.createElement("button")
-        readBtn.textContent = "Read Status";
-        readBtn.onclick = () => {
-            readStatus(content, addBook);
-        }
-        content.appendChild(readBtn);
-
-        document.getElementById("nameInput").value ='';
-        document.getElementById("genreInput").value ='';
-        document.getElementById("audienceInput").value = '';
-        document.getElementById("readStatus").value = 'Not Read';
-        
-        display.appendChild(content);
-        dialog.close();
-    });
-}
- 
-let dialog = document.querySelector("dialog");
-let showBtn = document.querySelector("dialog + button");
-let closeBtn = document.querySelector("dialog button");
+    const content = document.createElement("li");
+    content.setAttribute('data-index', index);
+    content.textContent = `Name: ${book.name}, Genre: ${book.genre}, Audience: ${book.audience}, Status: ${book.readStatus}`;
 
 
-function modalBtn(){
-    showBtn.addEventListener("click", () => {
-        dialog.showModal();
-    })
-    
-    closeBtn.addEventListener("click", () => {
-        dialog.close();
-    })
-}
-
-function deleteBook(index){
-    myLibrary.splice(index, 1);
-
-     content = document.querySelector(`li[data-index= '${index}']`);
-    content.remove();
-
-     content = document.querySelectorAll('anchor li');
-     content.array.forEach((item, i) => {
-        item.setAttribute('data-index', i)
-     });
-}
-function readStatus(content, addBook){
-    let readStatusGiven =  document.querySelector("#readStatus");
-    let currentStatus = readStatusGiven.value;
-
-    if(currentStatus === "Have Read"){
-        readStatusGiven.value = 'Not Read'
-    } else{
-        readStatusGiven.value = 'Have Read';        
-    }
-    content.textContent = `Name: ${addBook.name}, Genre: ${addBook.genre}, Audience: ${addBook.audience} Status: ${addBook.readStatus}` ;
-
-    let deleteBtn = document.createElement('button');
+    const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'Delete';
     deleteBtn.onclick = function() {
-        deleteBook(content.getAttribute('data-index'));
+      deleteBook(index);
     };
     content.appendChild(deleteBtn);
 
-    let readBtn = document.createElement("button");
-    readBtn.textContent = "Change Read Status";
+
+    const readBtn = document.createElement("button");
+    readBtn.textContent = "Toggle Read Status";
     readBtn.onclick = function() {
-        readStatus(content, addBook);
+      book.toggleReadStatus();
+      updateBookDisplay(content, book);
     };
+    content.appendChild(readBtn);
+
+    display.appendChild(content);
+
+
+    document.getElementById("nameInput").value = '';
+    document.getElementById("genreInput").value = '';
+    document.getElementById("audienceInput").value = '';
+    document.getElementById("readStatus").value = 'Not Read';
+  });
 }
-modalBtn()
+
+function updateBookDisplay(content, book) {
+  content.textContent = `Name: ${book.name}, Genre: ${book.genre}, Audience: ${book.audience}, Status: ${book.readStatus}`;
+  
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.onclick = function() {
+    deleteBook(content.getAttribute('data-index'));
+  };
+  content.appendChild(deleteBtn);
+
+  const readBtn = document.createElement("button");
+  readBtn.textContent = "Toggle Read Status";
+  readBtn.onclick = function() {
+    book.toggleReadStatus();
+    updateBookDisplay(content, book);
+  };
+  content.appendChild(readBtn);
+}
+
+
+function modalBtn(){
+  showBtn.addEventListener("click", () => {
+    dialog.showModal();
+  });
+  
+  closeBtn.addEventListener("click", () => {
+    dialog.close();
+  });
+}
+
+function deleteBook(index){
+  myLibrary.splice(index, 1);
+
+  const content = document.querySelector(`li[data-index='${index}']`);
+  content.remove();
+
+
+  const allContent = document.querySelectorAll(".anchor li");
+  allContent.forEach((item, i) => {
+    item.setAttribute('data-index', i);
+  });
+}
+
+modalBtn();
 addBookToLibrary();
